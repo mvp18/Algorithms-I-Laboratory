@@ -6,20 +6,14 @@ int method_0(int arr[], int n){
 	int index_a, index_b, index_c;
 	int a, b, c;
 	int flag=0;
-	for(int i=0; i<n; i++){
-		for(int j=0; j<n; j++){
-			for(int k=0; k<n; k++){
-				c=arr[i]; a=arr[j]; b=arr[k];
+	
+	for(int a=1; a<=n; a++){
+		for(int b=a+1; b<=n; b++){
+			for(int c=b+1; c<=n; c++){
 				for(int z=0; z<n; z++){
-					if (arr[z]==c){
-						index_c=z;
-					}
-					else if (arr[z]==a){
-						index_a=z;
-					}
-					else if (arr[z]==b){
-						index_b=z;
-					}
+					if (arr[z]==c) index_c=z;
+					else if (arr[z]==a)	index_a=z;
+					else if (arr[z]==b) index_b=z;
 				}
 				if ((index_c<index_a) && (index_a<index_b)){
 					flag=1;
@@ -36,6 +30,7 @@ int method_1(int arr[], int n){
 	int index_a, index_b, index_c;
 	int a, b, c;
 	int flag=0;
+	
 	for(int i=0; i<n; i++){
 		for(int j=i+1; j<n; j++){
 			for(int k=j+1; k<n; k++){
@@ -47,33 +42,40 @@ int method_1(int arr[], int n){
 			}
 		}
 	}
+	
 	return flag;
 }
 
 int method_2(int arr[], int n){
 	int flag_dec=0;
+	
 	for(int i=0; i<n; i++){
 		int c=arr[i];
 		int prev=c;
 		for(int j=i+1; j<n; j++){
-			if((arr[j]<c) && (arr[j]<prev)){
+			if(arr[j]<c){
+				if (arr[j]>prev){
 				flag_dec=1;
 				break;
+				}
+				else prev=arr[j];
 			}
-			else prev=arr[j];
 		}
 	}
 
 	return flag_dec;
 
 }
+
 string produce_string(int flag){
 
 	if (flag==0) return "Algolicious";
 	else return "Unalgolicious";
 }
+
 int main(){
 	int n;
+	cout << "n = ";
 	cin >> n;
 	int arr[n];
 	for (int i=0; i<n; i++){
