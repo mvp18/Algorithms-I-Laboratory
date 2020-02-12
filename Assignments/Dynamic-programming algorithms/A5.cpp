@@ -13,6 +13,7 @@ double find_profit(int m, double s, double t, double p){
 void optimalbuy1(int n,int C, int c[], double s[], double t[], double p[]){
 	double T[n][C+1];
 	int M[n][C+1];
+	int COPIES[n];
 	int i,j;
 	int m0;
 	int m;
@@ -71,29 +72,37 @@ void optimalbuy1(int n,int C, int c[], double s[], double t[], double p[]){
 	
 	int rem_capital=C;
 	int num_copies=0;
-	
+
 	for(i=n-1; i>=0; i--){
-		cout << "Machine " << i << ": ";
-		if(i==n-1) {
-			num_copies=M[i][C];
-		}
+		
+		if(i==n-1) num_copies=M[i][C];
+		
 		else{
 			rem_capital-=num_copies*c[i+1];
 			// cout << "Rem capital " << rem_capital << endl;
 			num_copies=M[i][rem_capital];
 		}
-		cout << num_copies << " copies, cost = " << c[i]*num_copies << endl;
-		total_buying_cost += c[i]*num_copies;
+
+		COPIES[i]=num_copies;
 	}
+	
+	for(i=0; i<n; i++){
+		cout << "Machine " << i << ": " << COPIES[i] << " copies, cost = " << c[i]*COPIES[i] << endl;
+		total_buying_cost += c[i]*COPIES[i];
+	}
+	
 	cout << "--- Total buying cost = " << total_buying_cost << endl;
 
 	cout << "--- Expected total profit = " << T[n-1][C] << endl;
 
 }
 void optimalbuy2(int n,int C, int c[], double s[], double t[], double r[], double p[], double q[]){
+	
 	double T[n][C+1];
 	int M[n][C+1];
-	int R[n];
+	int R[n][C+1];
+	int COPIES[n];
+	int REPAIR[n];
 	int i,j;
 	int m0;
 	int m;
@@ -108,18 +117,22 @@ void optimalbuy2(int n,int C, int c[], double s[], double t[], double r[], doubl
 	for(j=0; j<c[0];++j){
 		T[0][j]=MIN_COST;
 		M[0][j]=0;
+		R[0][j]=-1;
 	}
 	
 	for(j=c[0];j<C+1;++j){
 		m0=int(j/c[0]);
-		T[0][j]=find_profit(m0, s[0], t[0], p[0]);
 		M[0][j]=m0;
+		double profit_nr=find_profit(m0, s[0], t[0], p[0]);
+		double profit_r=find_profit(m0, s[0], t[0], q[0])-m0*r[0];
+		T[0][j]=(profit_nr>profit_r) ? profit_nr : profit_r;
 	}
 	
 	for(i=1; i<n; ++i){
 		for(j=0; j<c[i]; ++j){
 			T[i][j]=MIN_COST;
 			M[i][j]=0;
+			R[0][j]=-1;
 		}
 	}
 	
@@ -159,18 +172,16 @@ void optimalbuy2(int n,int C, int c[], double s[], double t[], double r[], doubl
 			if(max_profit_nr>max_profit_r){
 				M[i][j] = best_mi_nr;
 				T[i][j] = max_profit_nr;
-				repair_flag = 0;
+				R[i][j] = 0;
 			}
 			else{
 				M[i][j] = best_mi_r;
 				T[i][j] = max_profit_r;
-				repair_flag = 1;	
+				R[i][j] = 1;	
 			}		
 			
 		}
 		
-		if(repair_flag) R[i]=1;
-		else R[i]=0;
 	}
 
 
@@ -186,22 +197,33 @@ void optimalbuy2(int n,int C, int c[], double s[], double t[], double r[], doubl
 	
 	int rem_capital=C;
 	int num_copies=0;
-	
+	int maintain;
+
 	for(i=n-1; i>=0; i--){
-		cout << "Machine " << i << ": ";
+		
 		if(i==n-1) {
 			num_copies=M[i][C];
+			maintain=R[i][C];
 		}
+		
 		else{
 			rem_capital-=num_copies*c[i+1];
 			// cout << "Rem capital " << rem_capital << endl;
 			num_copies=M[i][rem_capital];
+			maintain=R[i][rem_capital];
 		}
-		cout << num_copies << " copies, cost = " << c[i]*num_copies;
-		total_buying_cost += c[i]*num_copies;
-		if(R[i]==0) cout << "[Maintenance not needed]" << endl;
+
+		COPIES[i]=num_copies;
+		REPAIR[i]=maintain;
+	}
+	
+	for(i=0; i<n; i++){
+		cout << "Machine " << i << ": " << COPIES[i] << " copies, cost = " << c[i]*COPIES[i];
+		total_buying_cost += c[i]*COPIES[i];
+		if(REPAIR[i]==0) cout << "[Maintenance not needed]" << endl;
 		else cout << "[Maintenance needed]" << endl;
 	}
+	
 	cout << "--- Total buying cost = " << total_buying_cost << endl;
 
 	cout << "--- Expected total profit = " << T[n-1][C] << endl;
@@ -222,20 +244,54 @@ int main(){
 	// 			  0.8605711086, 0.3952110880, 0.2891662559,	0.3816935232,
 	// 			  0.7402798372, 0.6947915922, 0.2011213947, 0.3774181376,
 	// 			  0.5810420500, 0.0518749737, 0.8351910188, 0.3619142445};
-	int C=3786;
-	int c[] = {89, 61, 56, 86, 98, 84, 84, 94, 44, 83, 48, 40, 97, 94, 61, 70};
-	double s[] = {65, 98, 74, 72, 68, 56, 77, 53, 90, 58, 57, 77, 89, 67, 59, 60};
-	double t[] = {29, 18, 35, 11, 27, 22, 14, 36, 31, 24, 19, 11, 36, 30, 37, 30};
-	double r[] = {5, 3, 3, 2, 3, 2, 1, 5, 5, 4, 5, 1, 1, 5, 1, 4};
-	double p[] = {0.9677234022, 0.7029225953, 0.5956791426, 0.6206195374, 
-				  0.6086358503, 0.8966557267, 0.8145519378, 0.5190614029, 
-				  0.9906660006, 0.9170714719, 0.8970835644, 0.8764973501, 
-				  0.7268638824, 0.9760647509, 0.6654729823, 0.7703263684};
-	double q[] = {0.3540109271, 0.2268331615, 0.3009378525, 0.2915592198, 
-				  0.3732578074, 0.5413447555, 0.5102089647, 0.4965962773, 
-		          0.2930110220, 0.3343770039, 0.2340338334, 0.4770201073, 
-				  0.4889666956, 0.4227880384, 0.6052897018, 0.4169863393};
-	int n=sizeof(c)/sizeof(c[0]);
+	// int C=3786;
+	// int c[] = {89, 61, 56, 86, 98, 84, 84, 94, 44, 83, 48, 40, 97, 94, 61, 70};
+	// double s[] = {65, 98, 74, 72, 68, 56, 77, 53, 90, 58, 57, 77, 89, 67, 59, 60};
+	// double t[] = {29, 18, 35, 11, 27, 22, 14, 36, 31, 24, 19, 11, 36, 30, 37, 30};
+	// double r[] = {5, 3, 3, 2, 3, 2, 1, 5, 5, 4, 5, 1, 1, 5, 1, 4};
+	// double p[] = {0.9677234022, 0.7029225953, 0.5956791426, 0.6206195374, 
+	// 			  0.6086358503, 0.8966557267, 0.8145519378, 0.5190614029, 
+	// 			  0.9906660006, 0.9170714719, 0.8970835644, 0.8764973501, 
+	// 			  0.7268638824, 0.9760647509, 0.6654729823, 0.7703263684};
+	// double q[] = {0.3540109271, 0.2268331615, 0.3009378525, 0.2915592198, 
+	// 			  0.3732578074, 0.5413447555, 0.5102089647, 0.4965962773, 
+	// 	          0.2930110220, 0.3343770039, 0.2340338334, 0.4770201073, 
+	// 			  0.4889666956, 0.4227880384, 0.6052897018, 0.4169863393};
+	int n;
+	cin >> n;
+	int C;
+	cin >> C;
+	int *c = (int *)malloc(n * sizeof(int));
+	for(int i=0; i<n; ++i){
+		cin >> c[i];
+	}
+	
+	double *s = (double *)malloc(n * sizeof(double));
+	double *t = (double *)malloc(n * sizeof(double));
+	double *r = (double *)malloc(n * sizeof(double));
+	double *p = (double *)malloc(n * sizeof(double));
+	double *q = (double *)malloc(n * sizeof(double));
+
+	for(int i=0; i<n; ++i){
+		cin >> s[i];
+	}
+
+	for(int i=0; i<n; ++i){
+		cin >> t[i];
+	}
+
+	for(int i=0; i<n; ++i){
+		cin >> r[i];
+	}
+
+	for(int i=0; i<n; ++i){
+		cin >> p[i];
+	}
+
+	for(int i=0; i<n; ++i){
+		cin >> q[i];
+	}
+	
 	cout << "+++	Part 1: Best buying option" << endl;
 	optimalbuy1(n, C, c, s, t, p);
 	cout << "\n\n";
