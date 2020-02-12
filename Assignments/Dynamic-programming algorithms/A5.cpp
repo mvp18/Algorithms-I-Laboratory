@@ -11,10 +11,19 @@ double find_profit(int m, double s, double t, double p){
 }
 
 void optimalbuy1(int n,int C, int c[], double s[], double t[], double p[]){
-	double T[n][C+1];
-	int M[n][C+1];
-	int COPIES[n];
+	// double T[n][C+1];
+	// int M[n][C+1];
+	// int COPIES[n];
 	int i,j;
+	double **T = (double **)malloc(n * sizeof(double *));
+	double **M = (double **)malloc(n * sizeof(double *));
+	double *COPIES = (double *)malloc(n * sizeof(double));
+
+	for(i=0; i<n; ++i){
+		T[i] = (double *)malloc((C+1) * sizeof(double));
+		M[i] = (double *)malloc((C+1) * sizeof(double));
+	}
+	
 	int m0;
 	int m;
 	double max_profit;
@@ -98,12 +107,24 @@ void optimalbuy1(int n,int C, int c[], double s[], double t[], double p[]){
 }
 void optimalbuy2(int n,int C, int c[], double s[], double t[], double r[], double p[], double q[]){
 	
-	double T[n][C+1];
-	int M[n][C+1];
-	int R[n][C+1];
-	int COPIES[n];
-	int REPAIR[n];
+	// double T[n][C+1];
+	// int M[n][C+1];
+	// int R[n][C+1];
+	// int COPIES[n];
+	// int REPAIR[n];
 	int i,j;
+	double **T = (double **)malloc(n * sizeof(double *));
+	double **M = (double **)malloc(n * sizeof(double *));
+	double **R = (double **)malloc(n * sizeof(double *));
+	
+	double *COPIES = (double *)malloc(n * sizeof(double));
+	double *REPAIR = (double *)malloc(n * sizeof(double));
+
+	for(i=0; i<n; ++i){
+		T[i] = (double *)malloc((C+1) * sizeof(double));
+		M[i] = (double *)malloc((C+1) * sizeof(double));
+		R[i] = (double *)malloc((C+1) * sizeof(double));
+	}
 	int m0;
 	int m;
 	int r_counter;
