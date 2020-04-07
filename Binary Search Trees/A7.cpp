@@ -48,7 +48,7 @@ void printPreorder(BSTNode* node){
 
 void BSTprn(BSTNode* node){
 
-	cout << "+++ BST constructed from input array" << endl;
+	cout << "\n+++ BST constructed from input array" << endl;
 	cout << "Preorder : ";
 	printPreorder(node);
 	cout << "\nInorder : ";
@@ -184,16 +184,15 @@ void merge_LR(vector<vector<int> > &seq, vector<int> &AL, vector<int> &AR, int n
             vector<int> vec(n);
             vec[0] = AL[0];
             int li = 1, ri = 0;
-            for(int i=0; i<n-1; i++)
-            {
-                if(B[i] == 0)
-                    vec[i+1] = AL[li++];
-                else
-                    vec[i+1] = AR[ri++];
+            for(int i=0; i<n-1; i++){
+            
+                if(B[i] == 0) vec[i+1] = AL[li++];
+                else vec[i+1] = AR[ri++];
             }
-            for(int i=0; i<n; i++)
-                cout<<vec[i]<<" ";
-            cout<<endl;
+            
+            // for(int i=0; i<n; i++)
+            //     cout<<vec[i]<<" ";
+            // cout<<endl;
             seq.push_back(vec);
         }
     }
@@ -247,13 +246,27 @@ int main(){
 	int n;
 	cin >> n;
 	vector<int> A(n);
-	for(int i=0; i<n; i++){
+	
+    for(int i=0; i<n; i++){
 		cin >> A[i];
 	}
-	cout << "+++ Sequence count" << endl;
-	cout << "+++ All sequences" << endl;
+	
+    cout << "\n+++ Sequence count" << endl;
+    cout << "Total number of sequences = " << countseq(A, n) << endl;
+	
+    cout << "\n+++ All sequences\n" << endl;
 	vector<vector<int> > seq = findallseq(A, n);
-	cout << "Total number of sequences = " << countseq(A, n) << endl;
+
+    for(int i=0; i<seq.size(); ++i){
+
+        cout << "Sequence " << (i+1) << " : ";
+
+        for(int j=0; j<seq[i].size(); ++j) cout << seq[i][j] << " ";
+
+        cout << endl;
+    }
+
+	
 	BSTNode *T = BSTcons(A, n);
 	BSTprn(T);
 	checkall(T, seq, n);

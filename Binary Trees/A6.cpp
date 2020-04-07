@@ -80,26 +80,27 @@ void makeskew(struct node* T, struct node* dummy){
 
 struct node* readtree(int n){
 
-	if(n <= 0)
-    	return NULL;
-    int key, n1, n2;
-    
-    cin >> key >> n1 >> n2;
-        
-    struct node* T = (struct node *)malloc(sizeof(struct node));
-    T->data = key;
-    
-    if(n == 1){
+	if(n <= 0) return NULL;
+  
+  int key, n1, n2;
+  
+  cin >> key >> n1 >> n2;
+      
+  struct node* T = (struct node *)malloc(sizeof(struct node));
+  
+  T->data = key;
+  
+  if(n == 1){
 
-    	T->left = NULL;
-        T->right = NULL;
-        return T;
-    }
-    
-    T->left = readtree(n1);
-    T->right = readtree(n2);
-    
+  	T->left = NULL;
+    T->right = NULL;
     return T;
+  }
+  
+  T->left = readtree(n1);
+  T->right = readtree(n2);
+  
+  return T;
 }  
 
 void printInorder(struct node* node){
